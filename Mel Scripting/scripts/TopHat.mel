@@ -48,3 +48,4 @@ global proc MoveTopHats () {
 }
 DuplicateTopHats ();
 MoveTopHats ();
+

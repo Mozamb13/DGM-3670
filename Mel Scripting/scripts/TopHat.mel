@@ -44,7 +44,7 @@ global proc MoveTopHats () {
     string $obj = `TopHat`;
     int $randNum = rand (-20,20);
     for ($i=0; $i < $randNum; $i++){
-        move  $randNum 0 $randNum;
+        move  $randNum 1 $randNum;
     }
 }
 DuplicateTopHats ();

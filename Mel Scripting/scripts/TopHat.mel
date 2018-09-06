@@ -34,18 +34,18 @@ global proc string TopHat() {
 
 global proc DuplicateTopHats () {
     string $obj = `TopHat`;
-    int $randNum = rand (1,1);
+    int $randNum = rand (-1,1);
     for ($i=0; $i < $randNum; $i++){
         duplicate -rr $obj;
-    }    
+    }
 }
+
 global proc MoveTopHats () {
     string $obj = `TopHat`;
-    int $randNum = rand (20,-20);
+    int $randNum = rand (-20,20);
     for ($i=0; $i < $randNum; $i++){
         move  $randNum 0 $randNum;
     }
 }
 DuplicateTopHats ();
 MoveTopHats ();
-

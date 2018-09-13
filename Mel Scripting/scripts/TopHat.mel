@@ -1,2 +1,46 @@
-// Error: DuplicateTopHats (); // 
-// Error: Line 45.19: Wrong number of arguments on call to DuplicateTopHats. // 
+global proc string TopHat() {
+   string $objects[];
+   
+   polyCylinder -r 1 -h 2 -sx 20 -sy 1 -sz 1 -ax 0 1 0 -rcp 0 -cuv 3 -ch 1 -name "hat";
+   string $sels[] = `ls -selection`;
+   $objects[0] = $sels[0];
+   
+   polyPipe -r 1 -h 2 -t 0.5 -sa 20 -sh 1 -sc 0 -ax 0 1 0 -cuv 1 -rcp 0 -ch 1 -name "Hat";
+   $sels = `ls -selection`;
+   $objects[1] = $sels[0];
+   
+   polyTorus -r 1 -sr 0.5 -tw 0 -sx 20 -sy 20 -ax 0 1 0 -cuv 1 -ch 1 -name "haT";
+   $sels = `ls -selection`;
+   $objects[2] = $sels[0];
+   
+   move -r -os -wd 0 1.079419 0 $objects[0];
+   scale -r 1 1.852249 1 $objects[0];
+   move -r -os -wd 0 1.134377 0 $objects[0];
+   move -r -os -wd 0 0.659848 0 $objects[1];
+   scale -r 1.07995 1.07995 1.07995 $objects[1];
+   scale -r 1 0.409568 1 $objects[2];
+   scale -r 1.315087 1.315087 1.315087 $objects[2] ;
+   scale -r 1 0.409568 1 $objects[2];
+   scale -r 1.315087 1.315087 1.315087 $objects[2] ;
+   
+   $objects = `polyUnite -ch 1 -mergeUVSets 1 -centerPivot -name "Tophat" hat Hat haT`;
+   delete -ch $objects;
+   
+   return $objects[0];
+   
+}
+
+
+
+global proc DuplicateTopHats (int $Xmin, int $Xmax, int $numdups) {
+    string $selection = `TopHat`;
+    for ($i = 0; $i < $numdups; $i++){
+        duplicate $selection;
+        float $xPos = rand($Xmin,$Xmax);
+        float $yPos = rand($Xmin,$Xmax);
+        float $zPos = rand($Xmin,$Xmax);
+        move $selection $xPos $yPos $zPos;
+        
+    }
+}
+DuplicateTopHats (1, 50, 50);

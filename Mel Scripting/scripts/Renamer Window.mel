@@ -1,0 +1,42 @@
+global proc RenamerWindow () { 
+	
+	string $mWindow = "RenameWindow";
+	
+	if(`window -exists $mWindow` == true)
+		deleteUI -window $mWindow;
+		
+	$mWindow = `window -title "Renamer Window" -sizeable 0 $mWindow`;
+	string $mColumn = `columnLayout -adjustableColumn 1 -columnAttach "both" 2 -parent $mWindow`;
+	string $txtField = `textField -parent $mColumn -placeholderText "Enter name"`;
+	string $renameBtn = `button -parent $mColumn -label "Rename"`;
+	button -e -command ("RunRenamer( \"" + $txtField + "\")") $renameBtn;
+	
+	window -e -width 400 -height 20 $mWindow;
+	showWindow($mWindow);
+	
+}
+global proc Renamer( string $input) {
+    string $selection[] = `ls-selection`;
+    string $protect[];
+    $numTokens = `tokenize $input "###" $protect`;
+    for ($i = 0; $i < size($selection); $i++){
+      if ($i < 10 ){
+          rename $selection[$i] ($protect[0] + ("00" + $i) + $protect[1]) ;
+          }
+          else if ($i < 100){
+           
+          rename $selection[$i] ($protect[0] + ("0" + $i) + $protect[1]) ;
+          }
+          else{
+      }
+  }
+}
+global proc string GetTextFieldValue (string $control){
+    string $value =` textField -q -text $control`;
+    return $value;
+}
+global proc RunRenamer (string $control){
+    string $name = ` GetTextFieldValue($control)`;
+    Renamer($name);
+}
+RenamerWindow ();

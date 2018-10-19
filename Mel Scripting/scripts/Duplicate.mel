@@ -1,0 +1,17 @@
+global proc DuplicateMove (int $xRange, int $yRange, int $zRange, int $numdups) {
+    string $selection[] = `ls -selection`;
+    
+     for ($i=0; $i<size($selection); $i++) {
+        
+        for ($h=0; $h<$numdups; $h++){
+            float $xPos = `rand ($xRange*-1) $xRange`;
+            float $yPos = `rand ($yRange*-1) $yRange`;
+            float $zPos = `rand ($zRange*-1) $zRange`;
+            
+            string $obj[] = `duplicate -rr $selection[$i]`;
+            move $xPos $yPos $zPos $obj[0];
+        }
+        
+    }
+}
+DuplicateMove (10, 10,10, 5);

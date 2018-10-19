@@ -32,15 +32,15 @@ global proc string TopHat() {
 
 
 
-global proc DuplicateTopHats (int $Xmin, int $Xmax, int $numdups) {
-    string $selection = `TopHat`;
+global proc DuplicateMove (int $Xmin, int $Xmax, int $numdups) {
+    string $selection[] = `ls -selection`;
     for ($i = 0; $i < $numdups; $i++){
         duplicate $selection;
         float $xPos = rand($Xmin,$Xmax);
         float $yPos = rand($Xmin,$Xmax);
         float $zPos = rand($Xmin,$Xmax);
-        move $selection $xPos $yPos $zPos;
+        move -absolute -worldSpace $xPos $yPos $zPos $selection[$i];
         
     }
 }
-DuplicateTopHats (1, 50, 50);
+DuplicateMove (1, 50, 50);

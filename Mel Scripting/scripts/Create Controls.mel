@@ -1,0 +1,49 @@
+global proc Createcontrols(int $color){
+    string $selection[] = `ls -sl`;
+    
+  
+         for ($sel in $selection){
+            string $ctrls[]= `nurbsCube -name ($sel+"_Ctrl")`;
+            string $ctrl = $ctrls[0];
+            matchTransform $ctrl $sel;
+            parentGroup($ctrl);
+        }
+   
+}
+global proc parentGroup(string $ctrl)
+{
+    string $selection[]= `ls -sl`;
+    
+    for ($sel in $selection)
+    {
+        string $parent[] = `listRelatives -parent -fullPath $sel`;
+      
+        string $grp = `group -empty - name ($sel + "_Grp")`;
+        matchTransform $grp $sel;
+        parent $sel $grp;
+    
+       
+       if (size($parent) > 0 ){
+           Print ($grp + "_" + $parent[0]);
+           parent $grp $parent[0];
+           }
+          
+    }
+}
+global proc Colorcontrols(string $ctrl, int $color){
+    string $shapes[];
+    $shapes = `listRelatives -shapes $ctrl`;
+    
+    for ($shape in $shapes) {
+        if (`nodeType $shape` == "nubrsCurve"){
+            setAttr($shape + ".overideEnabled") 1;
+            setAttr($shape + ".overrideColor") $color;
+        }
+        else
+        {
+            warning("Selected object is not a curve.");
+        }
+    }
+    
+}
+Createcontrols(1);

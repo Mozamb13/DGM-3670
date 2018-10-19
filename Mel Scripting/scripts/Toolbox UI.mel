@@ -1,0 +1,226 @@
+global proc ToolboxUI(){
+    string $mWindow = "Toolbox";
+	
+	if(`window -exists $mWindow` == true)
+		deleteUI -window $mWindow;
+		
+	$mWindow = `window -title "Toolbox" -sizeable 0 $mWindow`;
+	string $mColumn = `columnLayout -adjustableColumn 1 -columnAttach "both" 2 -parent $mWindow`;
+	string $renameBtn = `button -parent $mColumn -label "Renamer"`;
+	string $randBtn = `button -parent $mColumn -label "Random Placement Generator"`;
+	string $ctrlBtn = `button -parent $mColumn -label "Create Controls"`;
+	
+	button -e -command ("RenamerWindow") $renameBtn;
+	button -e -command ("DuplicateWindow") $randBtn;
+	button -e -command ("ControlWindow") $ctrlBtn;
+	
+	window -e -width 400 -height 20 $mWindow;
+	showWindow($mWindow);
+	
+}
+global proc RenamerWindow () { 
+	
+	string $mWindow = "RenameWindow";
+	
+	if(`window -exists $mWindow` == true)
+		deleteUI -window $mWindow;
+		
+	$mWindow = `window -title "Renamer Window" -sizeable 0 $mWindow`;
+	string $mColumn = `columnLayout -adjustableColumn 1 -columnAttach "both" 2 -parent $mWindow`;
+	string $txtField = `textField -parent $mColumn -placeholderText "Enter name ### Selection name"`;
+	string $renameBtn = `button -parent $mColumn -label "Rename"`;
+	button -e -command ("RunRenamer( \"" + $txtField + "\")") $renameBtn;
+	
+	window -e -width 400 -height 20 $mWindow;
+	showWindow($mWindow);
+	
+}
+global proc Renamer( string $input) {
+    string $selection[] = `ls-selection`;
+    string $protect[];
+    $numTokens = `tokenize $input "###" $protect`;
+    for ($i = 0; $i < size($selection); $i++){
+      if ($i < 10 ){
+          rename $selection[$i] ($protect[0] + ("00" + $i) + $protect[1]) ;
+          }
+          else if ($i < 100){
+           
+          rename $selection[$i] ($protect[0] + ("0" + $i) + $protect[1]) ;
+          }
+          else{
+      }
+  }
+}
+global proc string GetTextFieldValue (string $control){
+    string $value =` textField -q -text $control`;
+    return $value;
+}
+global proc RunRenamer (string $control){
+    string $name = ` GetTextFieldValue($control)`;
+    Renamer($name);
+}
+global proc DuplicateWindow() { 
+	
+	string $mWindow = "DuplicateWindow";
+	
+	if(`window -exists $mWindow` == true)
+		deleteUI -window $mWindow;
+		
+	$mWindow = `window -title "Randomplacement Generator" -sizeable 0 $mWindow`;
+	string $mColumn = `columnLayout -adjustableColumn 1 -columnAttach "both" 2 -parent $mWindow`;
+	
+	string $dupRowLayout =`rowLayout -parent $mColumn -numberOfColumns 2 -adjustableColumn 2`;
+	text -parent $dupRowLayout -label "Number of Duplicates";
+	string $dupIntField = `intField -parent $dupRowLayout -minValue 0 -value 0 `;
+	
+	string $rangeRowLayout =`rowLayout -parent $mColumn -numberOfColumns 4`;
+	text -parent $rangeRowLayout -label "Range";
+	string $xRange = `floatField -parent $rangeRowLayout -value 0`;
+	string $yRange = `floatField -parent $rangeRowLayout -value 0`;
+	string $zRange = `floatField -parent $rangeRowLayout -value 0`;
+	
+	
+	string $DupBtn = `button -parent $mColumn -label "Duplicate"`;
+	button -e -command ("RunRand(\"" + $dupIntField + "\", \"" + $xRange + "\", \"" + $yRange + "\",\"" + $zRange + "\")") $DupBtn;
+	
+	
+	window -e -width 400 -height 50 $mWindow;
+	showWindow($mWindow);
+	
+}
+global proc DuplicateMove (int $numdups, int $xRange, int $yRange, int $zRange ) {
+    string $selection[] = `ls -selection`;
+    
+     for ($i=0; $i<size($selection); $i++) {
+        
+        for ($h=0; $h<$numdups; $h++){
+            float $xPos = `rand ($xRange*-1) $xRange`;
+            float $yPos = `rand ($yRange*-1) $yRange`;
+            float $zPos = `rand ($zRange*-1) $zRange`;
+            
+            string $obj[] = `duplicate -rr $selection[$i]`;
+            move $xPos $yPos $zPos $obj[0];
+        }
+        
+    }
+}
+global proc float GetFloatFieldValue(string $control){
+    float $value =` floatField -q -value $control`;
+    return $value;
+}
+global proc int GetIntFieldValue(string $control){
+    int $value =` intField -q -value $control`;
+    return $value;
+}
+global proc RunRand (string $control, string $x, string $y, string $z){
+    string $dup = `GetIntFieldValue($control)`;
+    string $xrange = ` GetFloatFieldValue($x)`;
+    string $yrange = ` GetFloatFieldValue($y)`;
+    string $zrange = ` GetFloatFieldValue($z)`;
+    DuplicateMove($dup, $xrange, $yrange, $zrange);
+}
+DuplicateWindow();
+global proc ControlWindow () { 
+	
+	string $mWindow = "ControlWindow";
+	
+	if(`window -exists $mWindow` == true)
+		deleteUI -window $mWindow;
+		
+	$mWindow = `window -title "Create Control Window" -sizeable 0 $mWindow`;
+	string $mColumn = `columnLayout -adjustableColumn 1 -columnAttach "both" 2 -parent $mWindow`;
+	string $ctrlBtn = `button -parent $mColumn -label "Create Ctrl"`;
+	button -e -command ("Createcontrols") $ctrlBtn;
+	
+	window -e -width 400 -height 100 $mWindow;
+	showWindow($mWindow);
+	
+}
+global proc ControlWindow () { 
+	
+	string $mWindow = "ControlWindow";
+	
+	if(`window -exists $mWindow` == true)
+		deleteUI -window $mWindow;
+		
+	$mWindow = `window -title "Create Control Window" -sizeable 0 $mWindow`;
+	string $mColumn = `columnLayout -adjustableColumn 1 -columnAttach "both" 2 -parent $mWindow`;
+	string $crclBtn = `button -parent $mColumn -label "Create Circle Ctrl"`;
+	string $cubeBtn = `button -parent $mColumn -label "Create Cube Ctrl"`;
+	string $sqreBtn = `button -parent $mColumn -label "Create Square Ctrl"`;
+	string $clrSlider = `colorIndexSliderGrp -label "Color Ctrl" -visibleChangeCommand ("Colorcontrols(\""+$clrSlider+"\)") -minValue 1 -maxValue 32 -value 1`;
+	button -e -command ("RunColor(\""+$clrSlider+"\",\"circle\")") $crclBtn;
+	button -e -command ("RunColor(\""+$clrSlider+"\", \"cube\")") $cubeBtn;
+	button -e -command ("RunColor(\""+$clrSlider+"\", \"square\")") $sqreBtn;
+	
+	
+	window -e -width 400 -height 100 $mWindow;
+	showWindow($mWindow);
+	
+}
+global proc Createcontrols(int $color, string $type){
+    string $selection[] = `ls -sl`;
+    
+  
+         for ($sel in $selection){
+           string $ctrl;
+             if ($type == "circle") {
+		    string $ctrls[] = `circle -c 0 0 0 -nr 0 1 0 -sw 360 -r 1 -d 3 -ut 0 -tol 0.01 -s 8 -ch 1 -name ($sel+"_Ctrl")`;
+		    $ctrl = $ctrls[0];
+	        }
+	        else if($type == "square") {
+		    $ctrl = `curve -d 1 -p 1 0 -1 -p -1 0 -1 -p -1 0 1 -p 1 0 1 -p 1 0 -1 -k 0 -k 1 -k 2 -k 3 -k 4 -name ($sel+"_Ctrl")`;
+	        }
+	        else if($type == "cube") {
+		    $ctrl = `curve -d 1 -p 0.5 0.5 0.5 -p -0.5 0.5 0.5 -p -0.5 -0.5 0.5 -p 0.5 -0.5 0.5 -p 0.5 0.5 0.5 -p 0.5 0.5 -0.5 -p 0.5 -0.5 -0.5 -p 0.5 -0.5 0.5 -p 0.5 -0.5 -0.5 -p -0.5 -0.5 -0.5 -p -0.5 -0.5 0.5 -p -0.5 0.5 0.5 -p -0.5 0.5 -0.5 -p -0.5 -0.5 -0.5 -p -0.5 0.5 -0.5 -p 0.5 0.5 -0.5 -k 0 -k 1 -k 2 -k 3 -k 4 -k 5 -k 6 -k 7 -k 8 -k 9 -k 10 -k 11 -k 12 -k 13 -k 14 -k 15 -name ($sel+"_Ctrl")` ;
+	        }
+	        print $ctrl;
+           matchTransform $ctrl $sel;
+           parentGroup($ctrl);
+           Colorcontrols($ctrl, $color);
+        }
+   
+}
+
+global proc parentGroup(string $ctrl)
+{
+    string $selection[]= `ls -sl`;
+    
+    for ($sel in $selection)
+    {
+        string $parent[] = `listRelatives -parent -fullPath $sel`;
+      
+        string $grp = `group -empty - name ($sel + "_Grp")`;
+        matchTransform $grp $sel;
+        parent $sel $grp;
+    
+       
+       if (size($parent) > 0 ){
+           Print ($grp + "_" + $parent[0]);
+           parent $grp $parent[0];
+           }
+          
+    }
+}
+global proc Colorcontrols(string $ctrl, int $color){
+    string $shapes[];
+    $shapes = `listRelatives -shapes $ctrl`;
+    
+    for ($shape in $shapes) {
+        if (`nodeType $shape` == "nurbsCurve"){
+            setAttr($shape + ".overrideEnabled") 1;
+            setAttr($shape + ".overrideColor") $color;
+        }
+
+    }
+    
+}
+global proc int GetColorField( string $control){
+    int $value =` colorIndexSliderGrp -q -value $control`;
+    return $value;
+}
+global proc RunColor(string $control, string $Choose){
+    int $color = (` GetColorField ($control)`)-1;
+    Createcontrols($color, $Choose);
+}
+ToolboxUI();

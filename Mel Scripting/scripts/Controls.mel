@@ -1,38 +1,22 @@
-global proc MakingCtrls(int $color, string $shape, string $parent){
-// makes our integers//
+global proc parentGroup()
+{
 
-// create our Ctrls//
-    string $sels[] = `ls -selection`;
-    //this grabs everything in our plane//
-    for ($sel in $sels){
-        string $ctrls[] = `circle - name ($sel + "_Ctrl")`;
-        // renaming my Ctrl grp//
-        string $ctrl = $ctrls[0];
-         ShCtrl ($ctrl, $shape);
-        // define our shape control//
-        ClrCtrl($ctrl, $color);
-        // define our color control//
+    string $sels[] = `ls -sl`;
+    
+    for ($sel in $sels)
+    {
+        string $parent[] = `listRelatives -parent -fullPath $sel`;
+      
+        string $grp = `group -empty - name ($sel + "_Grp")`;
+        matchTransform $grp $sel;
+        parent $sel $grp;
+    
+       
+       if (size($parent) > 0 ){
+           Print ($grp + "_" + $parent[0]);
+           parent $grp $parent[0];
+           }
+          
     }
 }
-global proc ClrCtrl(){
-    
-   // define my shape string array//
-   string $shapes[];
-   //finds the shapes of the ctrls//
-   $shapes = 'listRelatives -shapes $ctrl`;
-   
-   for ($shape in $shape){
-       
-       if(`nodeType $shape` == "nurbsCurve"){
-           setAttr ($shape + ".overrideEnabled') 1;
-           setAttr ($color + ".overrideColor);
-       }
-        if(`nodeType $shape` == "nurbsSquare"){
-           setAttr ($shape + ".overrideEnabled') 2;
-           setAttr ($color + ".overrideColor);
-       }
-       
-   }
-   
-    
-}
+parentGroup();

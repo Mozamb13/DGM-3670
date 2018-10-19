@@ -1,0 +1,61 @@
+global proc DuplicateWindow() { 
+	
+	string $mWindow = "DuplicateWindow";
+	
+	if(`window -exists $mWindow` == true)
+		deleteUI -window $mWindow;
+		
+	$mWindow = `window -title "Randomplacement Generator" -sizeable 0 $mWindow`;
+	string $mColumn = `columnLayout -adjustableColumn 1 -columnAttach "both" 2 -parent $mWindow`;
+	
+	string $dupRowLayout =`rowLayout -parent $mColumn -numberOfColumns 2 -adjustableColumn 2`;
+	text -parent $dupRowLayout -label "Number of Duplicates";
+	string $dupIntField = `intField -parent $dupRowLayout -minValue 0 -value 0 `;
+	
+	string $rangeRowLayout =`rowLayout -parent $mColumn -numberOfColumns 4`;
+	text -parent $rangeRowLayout -label "Range";
+	string $xRange = `floatField -parent $rangeRowLayout -value 0`;
+	string $yRange = `floatField -parent $rangeRowLayout -value 0`;
+	string $zRange = `floatField -parent $rangeRowLayout -value 0`;
+	
+	
+	string $DupBtn = `button -parent $mColumn -label "Duplicate"`;
+	button -e -command ("RunRand(\"" + $dupIntField + "\", \"" + $xRange + "\", \"" + $yRange + "\",\"" + $zRange + "\")") $DupBtn;
+	
+	
+	window -e -width 400 -height 125 $mWindow;
+	showWindow($mWindow);
+	
+}
+global proc DuplicateMove (int $numdups, int $xRange, int $yRange, int $zRange ) {
+    string $selection[] = `ls -selection`;
+    
+     for ($i=0; $i<size($selection); $i++) {
+        
+        for ($h=0; $h<$numdups; $h++){
+            float $xPos = `rand ($xRange*-1) $xRange`;
+            float $yPos = `rand ($yRange*-1) $yRange`;
+            float $zPos = `rand ($zRange*-1) $zRange`;
+            
+            string $obj[] = `duplicate -rr $selection[$i]`;
+            move $xPos $yPos $zPos $obj[0];
+        }
+        
+    }
+}
+global proc float GetFloatFieldValue(string $control){
+    float $value =` floatField -q -value $control`;
+    return $value;
+}
+global proc int GetIntFieldValue(string $control){
+    int $value =` intField -q -value $control`;
+    return $value;
+}
+global proc RunRand (string $control, string $x, string $y, string $z){
+    string $dup = `GetIntFieldValue($control)`;
+    string $xrange = ` GetFloatFieldValue($x)`;
+    string $yrange = ` GetFloatFieldValue($y)`;
+    string $zrange = ` GetFloatFieldValue($z)`;
+    DuplicateMove($dup, $xrange, $yrange, $zrange);
+}
+DuplicateWindow();

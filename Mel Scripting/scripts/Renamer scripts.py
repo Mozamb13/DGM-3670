@@ -47,4 +47,4 @@ def Renamer (input):
         renamer = first + mid + second    
         cmds.rename (obj, renamer)
         
-Renamer("Hero_##_OBJ")
+Renamer("R_Robot_##_jnt")
